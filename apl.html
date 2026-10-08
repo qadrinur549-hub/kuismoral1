@@ -1,0 +1,339 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Anak Hebat - Edukasi Moral</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Bubblegum Sans', Arial, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #E0F7FA, #80DEEA);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            overflow: hidden;
+            border: 4px solid #00ACC1;
+        }
+        .screen {
+            padding: 24px;
+            text-align: center;
+            display: none;
+        }
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        h1 {
+            color: #00838F;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        h2 {
+            color: #006064;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .creator-tag {
+            background: #FFF9C4;
+            color: #F57F17;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 15px;
+            border: 2px dashed #FBC02D;
+        }
+        .btn {
+            background-color: #FFCA28;
+            color: #5d4037;
+            border: none;
+            padding: 14px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 0 #FFA000;
+            transition: 0.1s;
+        }
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #FFA000;
+        }
+        .btn-green {
+            background-color: #66BB6A;
+            color: white;
+            box-shadow: 0 4px 0 #388E3C;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .option-btn {
+            background-color: #E0F7FA;
+            color: #006064;
+            border: 2px solid #00ACC1;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 14px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        .option-btn:hover {
+            background-color: #B2EBF2;
+            transform: scale(1.02);
+        }
+        .option-btn.correct-visual {
+            background-color: #C8E6C9 !important;
+            border-color: #4CAF50 !important;
+            color: #1B5E20 !important;
+        }
+        .option-btn.wrong-visual {
+            background-color: #FFCDD2 !important;
+            border-color: #E57373 !important;
+            color: #B71C1C !important;
+        }
+        #feedback-box {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 15px;
+            padding: 14px;
+            border-radius: 12px;
+            display: none;
+            text-align: left;
+        }
+        .score-box {
+            font-size: 20px;
+            color: #00838F;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: #E0F7FA;
+            padding: 8px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- BERANDA -->
+    <div id="home-screen" class="screen active">
+        <h1>🌟 Kuis Anak Hebat 🌟</h1>
+        <p>Aplikasi Pendidikan Moral Interaktif untuk Anak SD Kelas 1 - 3</p>
+        
+        <div>
+            <span class="creator-tag">Dibuat oleh: Nur Qodri Azizy</span>
+        </div>
+
+        <button class="btn btn-green" onclick="speakAndNavigate('Mulai Permainan', 'game-screen')">🎮 Mulai Permainan</button>
+        <button class="btn" onclick="speakAndNavigate('Cerita Teladan', 'story-screen')">📖 Cerita Teladan</button>
+    </div>
+
+    <!-- CERITA TELADAN -->
+    <div id="story-screen" class="screen">
+        <h2>📖 Kisah Teladan</h2>
+        <p style="text-align: left; background: #F1F8E9; padding: 15px; border-radius: 10px; border-left: 5px solid #7CB342;">
+            <b>Kisah Ani dan Pensil:</b><br>
+            Ani melihat temannya, Budi, tidak membawa pensil. Ani dengan senang hati meminjamkan satu pensilnya. Sikap ini adalah wujud nyata perilaku <b>menolong</b> sesama teman.
+        </p>
+        <button class="btn" onclick="speakAndNavigate('Kembali ke Beranda', 'home-screen')">⬅ Kembali</button>
+    </div>
+
+    <!-- PERMAINAN KUIS -->
+    <div id="game-screen" class="screen">
+        <h2>🎯 Tantangan Perilaku Baik</h2>
+        <div class="score-box">Skor Kebaikan: <span id="score">0</span></div>
+        <p id="question-text" style="font-weight: bold; color: #37474F; text-align: left; background: #F5F5F5; padding: 14px; border-radius: 12px; border-left: 5px solid #00ACC1;"></p>
+        
+        <div class="options-container" id="options-box"></div>
+
+        <div id="feedback-box"></div>
+        <br>
+        <button class="btn btn-green" id="next-btn" style="display:none;" onclick="nextQuestion()">Lanjut Soal Berikutnya ➡️</button>
+        <button class="btn" id="back-home-btn" style="display:none;" onclick="speakAndNavigate('Beranda', 'home-screen')">🏠 Beranda</button>
+    </div>
+
+</div>
+
+<script>
+    // Sintesis Suara AI Lelaki (Web Speech API)
+    function speakText(text, callback) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            let utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'id-ID';
+            utterance.rate = 0.85; // Lambat agar ramah anak SD
+            utterance.pitch = 0.75; // Nada rendah (khas suara lelaki)
+
+            let voices = window.speechSynthesis.getVoices();
+            let maleVoice = voices.find(v => v.lang.includes('id') && !v.name.toLowerCase().includes('female'));
+            if (maleVoice) {
+                utterance.voice = maleVoice;
+            }
+
+            if (callback) {
+                utterance.onend = callback;
+            }
+            window.speechSynthesis.speak(utterance);
+        } else if (callback) {
+            callback();
+        }
+    }
+
+    function speakAndNavigate(textButton, screenId) {
+        speakText(textButton, function() {
+            showScreen(screenId);
+        });
+    }
+
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        if (screenId === 'game-screen') {
+            startQuiz();
+        }
+    }
+
+    // Daftar Pertanyaan dan Situasi Moral
+    const quizData = [
+        {
+            question: "Pertanyaan 1: Kamu tidak sengaja menyenggol meja temanmu hingga buku tulisnya jatuh berserakan di lantai. Apa yang sebaiknya kamu lakukan?",
+            options: [
+                "A. Diam saja dan pura-pura tidak melihat",
+                "B. Meminta maaf dan langsung membantunya memungut buku",
+                "C. Menertawakan buku teman yang jatuh"
+            ],
+            correctAnswer: 1,
+            reinforcement: "Hebat sekali! Meminta maaf dan membantu teman adalah tindakan anak yang bertanggung jawab dan berakhlak mulia."
+        },
+        {
+            question: "Pertanyaan 2: Saat jam istirahat sekolah, kamu melihat ada bungkus plastik jajanan berserakan di depan pintu kelas. Sikap yang paling tepat adalah...",
+            options: [
+                "A. Membuang sampah tersebut ke tempat sampah",
+                "B. Menendang sampahnya ke pojok ruangan kelas",
+                "C. Membiarkannya karena bukan sampahmu"
+            ],
+            correctAnswer: 0,
+            reinforcement: "Pintar! Menjaga kebersihan lingkungan kelas adalah wujud kepedulian terhadap kebersihan bersama."
+        },
+        {
+            question: "Pertanyaan 3: Ibu guru sedang berdiri di depan kelas dan menerangkan pelajaran penting kepada semua siswa. Sikap dudukmu yang benar adalah...",
+            options: [
+                "A. Asyik mengobrol dan bermain sendiri dengan teman",
+                "B. Mendengarkan penjelasan guru dengan tenang dan tertib",
+                "C. Tidur-tiduran di atas meja kelas"
+            ],
+            correctAnswer: 1,
+            reinforcement: "Luar biasa! Menyimak guru dengan tenang adalah bentuk rasa hormat kepada orang yang sedang mengajar."
+        }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+
+    function startQuiz() {
+        currentIndex = 0;
+        score = 0;
+        document.getElementById('score').innerText = score;
+        document.getElementById('back-home-btn').style.display = 'none';
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        document.getElementById('feedback-box').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+
+        if (currentIndex < quizData.length) {
+            let currentItem = quizData[currentIndex];
+            document.getElementById('question-text').innerText = currentItem.question;
+            
+            speakText(currentItem.question);
+
+            let optionsHtml = "";
+            currentItem.options.forEach((opt, index) => {
+                optionsHtml += `<button class="option-btn" id="opt-${index}" onclick="handleAnswer(${index})">${opt}</button>`;
+            });
+            document.getElementById('options-box').innerHTML = optionsHtml;
+        } else {
+            let finalMsg = `Hore! Kamu telah menyelesaikan seluruh latihan kuis moral ini dengan sangat baik. Skor total kamu ${score}`;
+            document.getElementById('question-text').innerText = "🎉 Kuis Selesai dengan Hebat!";
+            document.getElementById('options-box').innerHTML = `<p style="font-size: 20px; color: #00838F; font-weight: bold;">Skor Akhir Kamu: ${score} dari ${quizData.length * 10}</p>`;
+            document.getElementById('back-home-btn').style.display = 'block';
+            speakText(finalMsg);
+        }
+    }
+
+    function handleAnswer(selectedIndex) {
+        let currentItem = quizData[currentIndex];
+        let allButtons = document.querySelectorAll('.option-btn');
+        
+        allButtons.forEach(btn => btn.disabled = true);
+
+        let feedbackBox = document.getElementById('feedback-box');
+        feedbackBox.style.display = 'block';
+
+        if (selectedIndex === currentItem.correctAnswer) {
+            score += 10;
+            document.getElementById('score').innerText = score;
+            document.getElementById(`opt-${selectedIndex}`).classList.add('correct-visual');
+            
+            feedbackBox.style.backgroundColor = "#E8F5E9";
+            feedbackBox.style.border = "2px solid #4CAF50";
+            feedbackBox.innerHTML = `<span style="color: #2E7D32;">✔ Jawaban Benar!<br>${currentItem.reinforcement}</span>`;
+            
+            speakText("Benar sekali! " + currentItem.reinforcement);
+        } else {
+            document.getElementById(`opt-${selectedIndex}`).classList.add('wrong-visual');
+            document.getElementById(`opt-${currentItem.correctAnswer}`).classList.add('correct-visual');
+            
+            feedbackBox.style.backgroundColor = "#FFEBEE";
+            feedbackBox.style.border = "2px solid #E57373";
+            feedbackBox.innerHTML = `<span style="color: #C62828;">✖ Sayang sekali, belum tepat.<br>Jawaban yang benar adalah pilihan yang menunjukkan kebaikan. ${currentItem.reinforcement}</span>`;
+            
+            speakText("Sayang sekali, belum tepat. " + currentItem.reinforcement);
+        }
+
+        document.getElementById('next-btn').style.display = 'block';
+        currentIndex++;
+    }
+
+    function nextQuestion() {
+        loadQuestion();
+    }
+</script>
+
+</body>
+</html>
+
+
